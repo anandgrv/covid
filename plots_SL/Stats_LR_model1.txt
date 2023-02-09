@@ -1,0 +1,37 @@
+#using the overall_covid19_diff dataset for prediction
+setwd("C:/Users/gaura/Desktop/DataScienceMS/Statistical_Learning/Covid_Data")
+df1 <- read.csv('overall_covid19_diff.csv', stringsAsFactors = FALSE)
+
+#removing the date column and X(numbering) 
+#global_atm column as it is the corelation between predictor and target variable
+#global_atm = confirmed cases- recovered cases
+df1 <- subset(df1, select = c(-Date, -X, -Global_atm))
+
+#applying linear regression model to predict the confirmed cases
+lr1_conf <- lm(Global_conf~., data = df1)
+summary(lr1_conf)
+
+#understanding the fitting through plots
+par(mfrow=c(2,2))
+plot(lr1_conf)
+
+#creating a dataframe from the dataset to test the model prediction
+Global_deaths <- c(20)
+Global_incidence <- c(1.165562e-03)
+Global_recovered <- c(50)
+
+df_pred <- cbind(Global_deaths, Global_incidence, Global_recovered)
+
+#predicting the number of confirmed cases from the dataframe
+predict(lr1_conf, data.frame(df_pred))
+
+#prediction on entire dataset using Global_deaths, Global_incidence and Global_recovered
+Global_deaths <- df1$Global_deaths
+Global_incidence <- df1$Global_incidence
+Global_recovered <- df1$Global_recovered
+
+df_pred <- cbind(Global_deaths, Global_incidence, Global_recovered)
+
+
+#predicting the number of confirmed cases from the entire dataframe
+predict(lr1_conf, data.frame(df_pred))
